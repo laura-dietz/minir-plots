@@ -1,8 +1,7 @@
 minir-plots
 ===========
 
-Mini Plotting scripts for IR experiments
-
+Mini Plotting scripts for IR experiments.
 
 Works with query-by-query output of trec-eval and galago-eval evaluation code which produce run files in the tab-separated form queryId, metric, value.
 
@@ -25,6 +24,8 @@ Example:
     C09-2	ERR10	0.17907
     C09-2	ERR20	0.18581
     C09-2	P1	0.0
+
+These scripts require Python 2.7, numpy, scipy, matplotlib and pandas.
 
 
 Creating column plots with std error bars

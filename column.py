@@ -25,8 +25,7 @@ def is_valid_file(parser, arg):
     if not os.path.exists(arg):
         parser.error("The file %s does not exist!" % arg)
     else:
-        return arg# open(arg,'r')  #return an open file handle
-
+        return arg
 
 parser = ArgumentParser()
 parser.add_argument('--out', help='outputfilename', metavar='FILE',  required=True)
@@ -36,7 +35,6 @@ args = parser.parse_args()
 
 print "column.py metric="+args.metric+" out="+args.out
 
-# with open(args.run1,'rb') as tsv1, open(args.run2, 'rb') as tsv2:
 
 
 def findQueriesWithNanValues(run):
