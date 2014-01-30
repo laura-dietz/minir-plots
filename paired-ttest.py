@@ -7,7 +7,6 @@ import scipy
 __author__ = 'dietz'
 
 from argparse import ArgumentParser
-import numpy as np
 import scipy.stats as sciStats
 
 # query metric value
@@ -32,7 +31,6 @@ parser.add_argument('--metric', help='metric for comparison', required=True)
 parser.add_argument(dest='runs', nargs='+', type=lambda x: is_valid_file(parser, x))
 args = parser.parse_args()
 
-# with open(args.run1,'rb') as tsv1, open(args.run2, 'rb') as tsv2:
 
 def fetchValues(run):
     tsv = csv.reader(open(run, 'r'), delimiter='\t')
@@ -66,11 +64,3 @@ for run in datas:
         (tstat, prob) = sciStats.ttest_rel(basearray, dataarray)
         print run, tstat, prob
 
-
-
-
-# print '\t'.join(['run', 'num helps', 'num hurts', 'list helps', 'list hurts'])
-# for run in datas:
-#     if not run == args.runs[0]:
-#         print '\t'.join([run, str(len(helpsDict[run])), str(len(hurtsDict[run])), ' '.join(helpsDict[run]),
-#                          ' '.join(hurtsDict[run])])

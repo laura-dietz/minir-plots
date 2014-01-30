@@ -29,7 +29,7 @@ def is_valid_file(parser, arg):
 
 
 parser = ArgumentParser()
-parser.add_argument('--out', help='outputfilename', required=True)
+parser.add_argument('--out', help='outputfilename', metavar='FILE',  required=True)
 parser.add_argument('--metric', help='metric for comparison', required=True)
 parser.add_argument(dest='runs', nargs='+', type=lambda x: is_valid_file(parser, x))
 args = parser.parse_args()

@@ -1,5 +1,7 @@
+from collections import defaultdict
 import csv
 import os
+import math
 
 __author__ = 'dietz'
 
@@ -17,38 +19,66 @@ from argparse import ArgumentParser
 
 def is_valid_file(parser, arg):
     if not os.path.exists(arg):
-       parser.error("The file %s does not exist!"%arg)
+        parser.error("The file %s does not exist!" % arg)
     else:
-       return open(arg,'r')  #return an open file handle
+        return arg# open(arg,'r')  #return an open file handle
+
 
 parser = ArgumentParser()
-parser.add_argument('--run1', metavar="FILE", dest='run1', required=True, type=lambda x: is_valid_file(parser,x))
-parser.add_argument('--run2', metavar="FILE", dest='run2', required=True, type=lambda x: is_valid_file(parser,x))
 parser.add_argument('--metric', help='metric for comparison', required=True)
 parser.add_argument('--delta', help='Minimum difference to be considered', type=float, default=0.00)
+parser.add_argument(dest='runs', nargs='+', type=lambda x: is_valid_file(parser, x))
 args = parser.parse_args()
 
 # with open(args.run1,'rb') as tsv1, open(args.run2, 'rb') as tsv2:
-tsv1 = csv.reader(args.run1, delimiter='\t')
 
-tsv2 = csv.reader(args.run2, delimiter='\t')
+def fetchValues(run):
+    tsv = csv.reader(open(run, 'r'), delimiter='\t')
+    data = {row[0]: float(row[2]) for row in tsv if row[1] == args.metric}
+    return data
 
-data1 = {row[0]: float(row[2]) for row in tsv1 if row[1] == args.metric}
-data2 = {row[0]: float(row[2]) for row in tsv2 if row[1] == args.metric}
+def findQueriesWithNanValues(run):
+    tsv = csv.reader(open(run, 'r'), delimiter='\t')
+    queriesWithNan = {row[0] for row in tsv if row[1] == 'num_rel' and (float(row[2]) == 0.0 or math.isnan(float(row[2])))}
+    return queriesWithNan
 
-helps=list()
-hurts=list()
 
-for key in data1:
-    value1 = data1[key]
-    value2 = data2[key]
-    if value1 > value2 + args.delta:
-        helps.append(key)
-    if value1 < value2 - args.delta:
-        hurts.append(key)
+datas = {run: fetchValues(run) for run in args.runs}
 
-print 'helps\t',len(helps)
-print 'hurts\t',len(hurts)
+queriesWithNanValues = {'all'}.union(*[findQueriesWithNanValues(run) for run in args.runs])
+basedata=datas[args.runs[0]]
+queries = set(basedata.keys()).difference(queriesWithNanValues)
 
-print 'helps for queries:', ' '.join(helps)
-print 'hurts for queries:', ' '.join(hurts)
+basedata = datas[args.runs[0]]
+helpsDict = defaultdict(list)
+hurtsDict = defaultdict(list)
+
+for run in datas:
+    if not run == args.runs[0]:
+        data = datas[run]
+        helps = list()
+        hurts = list()
+        for key in queries:
+            baseValue = basedata[key]
+            value = data[key]
+            if value - args.delta > baseValue:
+                helps.append(key)
+            if value + args.delta < baseValue:
+                hurts.append(key)
+
+        helpsDict[run] = helps
+        hurtsDict[run] = hurts
+
+print '\t'.join(['run', 'num helps', 'num hurts', 'list helps', 'list hurts'])
+for run in datas:
+    if not run == args.runs[0]:
+        print '\t'.join([run, str(len(helpsDict[run])), str(len(hurtsDict[run])), ' '.join(helpsDict[run]),
+                         ' '.join(hurtsDict[run])])
+
+prefix = '/home/dietz/kbbridge/writing/sigir2014/data/eval/clueweb09b/'
+EQFE_help = set(helpsDict[prefix+'EQFE'])
+EQFE_help.difference_update(set(helpsDict[prefix+'rm']))
+EQFE_help.difference_update(set(helpsDict[prefix+'wikiRm1']))
+
+for q in EQFE_help:
+    print q,'EQFE',datas[prefix+'EQFE'][q],'SDM',basedata[q]
