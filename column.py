@@ -1,15 +1,11 @@
-from collections import defaultdict
 import csv
 from math import sqrt
-from numpy.testing import rand
 import os
 import numpy as np
 import math
 from pandas.util.testing import DataFrame, Series
-from time import sleep
 import matplotlib.pyplot as plt
 import pandas as pd
-from matplotlib.pyplot import ylabel
 
 __author__ = 'dietz'
 
