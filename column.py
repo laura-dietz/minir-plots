@@ -39,19 +39,23 @@ print "column.py metric="+args.metric+" out="+args.out
 
 def findQueriesWithNanValues(run):
     tsv = csv.reader(open(run, 'r'), delimiter='\t')
-    queriesWithNan = {row[0] for row in tsv if row[1] == 'num_rel' and (float(row[2]) == 0.0 or math.isnan(float(row[2])))}
+    queriesWithNan = {row[2] for row in tsv if row[3] == '0.00000000'}
     return queriesWithNan
 
 def fetchValues(run):
     tsv = csv.reader(open(run, 'r'), delimiter='\t')
-    data = {row[0]: float(row[2]) for row in tsv if row[1] == args.metric and not math.isnan(float(row[2]))}
+    data = {row[2]: float(row[3]) for row in tsv if row[1] == args.metric and not row[3] == 'SCORE' and (float(row[3]) > 0.0)}
     return data
 
 
 datas = {run: fetchValues(run) for run in args.runs}
 
+# for run in args.runs:
+#     print (run, findQueriesWithNanValues(run))
+#     print (run, fetchValues(run))
+
 # deal with nans
-queriesWithNanValues = {'all'}.union(*[findQueriesWithNanValues(run) for run in args.runs])
+queriesWithNanValues = {'MAP'}.union(*[findQueriesWithNanValues(run) for run in args.runs])
 basedata=datas[args.runs[0]]
 queries = set(basedata.keys()).difference(queriesWithNanValues)
 
@@ -76,8 +80,8 @@ print "dropping queries because of NaN values: "+ " ".join(queriesWithNanValues)
 
 print '\t'.join(['run', 'mean/stderr'])
 for run in datas:
-    if not run == args.runs[0]:
-        print '\t'.join([run, str(seriesDict['mean'][run]), str(seriesDict['stderr'][run])])
+    # if not run == args.runs[0]:
+    print '\t'.join([run, str(seriesDict['mean'][run]), str(seriesDict['stderr'][run])])
 
 
 df1 = DataFrame(seriesDict, index=args.runs)
@@ -85,10 +89,10 @@ df2 = df1['mean']
 df2.index=[os.path.basename(label) for label in df1.index]
 
 
-plt.figure()
-df2.plot(kind='bar', yerr = df1['stderr'], color=['1.0', '0.80', '0.4', '0.0', '0.70'])
+plt.figure(num=None, figsize=(14, 6), dpi=80)
+df2.plot(kind='bar', yerr = df1['stderr'], color=['1.0', '1.0', '0.80', '0.80', '0.5','0.5','0.25', '0.25'])
 plt.ylabel(args.metric, fontsize=20)
-plt.tick_params(axis='both', which='major', labelsize=20)
+plt.tick_params(axis='both', which='major', labelsize=15)
 plt.xticks(rotation=0)
 plt.savefig(args.out, bbox_inches='tight')
 

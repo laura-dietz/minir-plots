@@ -44,21 +44,20 @@ print "column_difficulty.py metric=" + args.metric + " diffmetric=" + diffmetric
 
 def findQueriesWithNanValues(run):
     tsv = csv.reader(open(run, 'r'), delimiter='\t')
-    queriesWithNan = {row[0] for row in tsv if
-                      row[1] == 'num_rel' and (float(row[2]) == 0.0 or math.isnan(float(row[2])))}
+    queriesWithNan = {row[2] for row in tsv if row[3] == '0.00000000'}
     return queriesWithNan
 
-
-def fetchValues(run, metric=args.metric):
+def fetchValues(run, metric = args.metric):
     tsv = csv.reader(open(run, 'r'), delimiter='\t')
-    data = {row[0]: float(row[2]) for row in tsv if row[1] == metric and not math.isnan(float(row[2]))}
+    data = {row[2]: float(row[3]) for row in tsv if row[1] == metric and not row[3] == 'SCORE' and (float(row[3]) > 0.0)}
     return data
+
 
 
 datas = {run: fetchValues(run) for run in args.runs}
 
 # deal with nans
-queriesWithNanValues = {'all'}.union(*[findQueriesWithNanValues(run) for run in args.runs])
+queriesWithNanValues = {'MAP'}.union(*[findQueriesWithNanValues(run) for run in args.runs])
 basedata = fetchValues(args.runs[0], diffmetric)
 print basedata
 
@@ -95,7 +94,7 @@ df2.index = [os.path.basename(label) for label in df1.index]
 df3 = df2.transpose()
 
 plt.figure()
-df3.plot(kind='bar', label=args.metric, color=['1.0', '0.80', '0.4', '0.0', '0.70'])
+df3.plot(kind='bar', label=args.metric, color=['1.0', '1.0', '0.80', '0.80', '0.5','0.5','0.25', '0.25'])
 leg = plt.legend(loc='best', fancybox=True)
 leg.get_frame().set_alpha(0.5)
 plt.tick_params(axis='both', which='major', labelsize=11)
@@ -105,3 +104,7 @@ plt.xlabel("difficulty percentile according to " + os.path.basename(args.runs[0]
 
 plt.savefig(args.out, bbox_inches='tight')
 # plt.show()
+
+
+for key in ['0%-5%', '5%-25%', '25%-50%', '50%-75%', '75%-95%', '95%-100%']:
+    print 'queries in percentile '+key+': \t'+' '.join(queriesDiff[key])
