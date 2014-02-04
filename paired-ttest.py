@@ -32,20 +32,22 @@ parser.add_argument(dest='runs', nargs='+', type=lambda x: is_valid_file(parser,
 args = parser.parse_args()
 
 
-def fetchValues(run):
-    tsv = csv.reader(open(run, 'r'), delimiter='\t')
-    data = {row[0]: float(row[2]) for row in tsv if row[1] == args.metric}
-    return data
 
 def findQueriesWithNanValues(run):
     tsv = csv.reader(open(run, 'r'), delimiter='\t')
-    queriesWithNan = {row[0] for row in tsv if row[1] == 'num_rel' and (float(row[2]) == 0.0 or math.isnan(float(row[2])))}
+    queriesWithNan = {row[2] for row in tsv if row[3] == '0.00000000'}
     return queriesWithNan
+
+def fetchValues(run):
+    tsv = csv.reader(open(run, 'r'), delimiter='\t')
+    data = {row[2]: float(row[3]) for row in tsv if row[1] == args.metric and not row[3] == 'SCORE' and (float(row[3]) > 0.0)}
+    return data
+
 
 
 datas = {run: fetchValues(run) for run in args.runs}
 
-queriesWithNanValues = {'all'}.union(*[findQueriesWithNanValues(run) for run in args.runs])
+queriesWithNanValues = {'MAP'}.union(*[findQueriesWithNanValues(run) for run in args.runs])
 basedata=datas[args.runs[0]]
 queries = set(basedata.keys()).difference(queriesWithNanValues)
 queriesList = list(queries)

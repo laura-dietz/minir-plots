@@ -107,4 +107,4 @@ plt.savefig(args.out, bbox_inches='tight')
 
 
 for key in ['0%-5%', '5%-25%', '25%-50%', '50%-75%', '75%-95%', '95%-100%']:
-    print 'queries in percentile '+key+': \t'+' '.join(queriesDiff[key])
+    print 'queries in percentile '+key+': \t'+' '.join([key for (key,x) in queriesDiff[key]])
