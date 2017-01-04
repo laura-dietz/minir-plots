@@ -1,3 +1,4 @@
+from __future__ import print_function
 import csv
 from math import sqrt
 import os
@@ -33,7 +34,7 @@ parser.add_argument('--metric', help='metric for comparison', required=True)
 parser.add_argument(dest='runs', nargs='+', type=lambda x: is_valid_file(parser, x))
 args = parser.parse_args()
 
-print "column.py metric="+args.metric+" out="+args.out
+print("column.py metric="+args.metric+" out="+args.out)
 
 
 
@@ -62,7 +63,7 @@ for run in datas:
     data = datas[run]
 
     if sum(not key in data for key in queries) > 0:
-        print "data for run "+run+" does not contain all queries "+" ".join(queries)
+        print("data for run "+run+" does not contain all queries "+" ".join(queries))
 
     mean = np.average([data[key] for key in queries])
     stderr = np.std([data[key] for key in queries]) / sqrt(len(queries))
@@ -72,12 +73,12 @@ for run in datas:
 
 
 
-print "dropping queries because of NaN values: "+ " ".join(queriesWithNanValues)
+print( "dropping queries because of NaN values: "+ " ".join(queriesWithNanValues))
 
-print '\t'.join(['run', 'mean/stderr'])
+print ('\t'.join(['run', 'mean/stderr']))
 for run in datas:
     if not run == args.runs[0]:
-        print '\t'.join([run, str(seriesDict['mean'][run]), str(seriesDict['stderr'][run])])
+        print ('\t'.join([run, str(seriesDict['mean'][run]), str(seriesDict['stderr'][run])]))
 
 
 df1 = DataFrame(seriesDict, index=args.runs)

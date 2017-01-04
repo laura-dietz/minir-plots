@@ -1,3 +1,4 @@
+from __future__ import print_function
 import csv
 from math import sqrt
 import os
@@ -39,7 +40,7 @@ args = parser.parse_args()
 
 diffmetric = args.diffmetric if args.diffmetric is not None else args.metric
 
-print "column_difficulty.py metric=" + args.metric + " diffmetric=" + diffmetric + "  out=" + args.out
+print ("column_difficulty.py metric=" + args.metric + " diffmetric=" + diffmetric + "  out=" + args.out)
 
 
 def findQueriesWithNanValues(run):
@@ -60,7 +61,7 @@ datas = {run: fetchValues(run) for run in args.runs}
 # deal with nans
 queriesWithNanValues = {'all'}.union(*[findQueriesWithNanValues(run) for run in args.runs])
 basedata = fetchValues(args.runs[0], diffmetric)
-print basedata
+print (basedata)
 
 queries = set(basedata.keys()).difference(queriesWithNanValues)
 
@@ -83,10 +84,10 @@ for run in datas:
 
     mean = np.average([data[key] for key in queries])
     stderr = np.std([data[key] for key in queries]) / sqrt(len(queries))
-    for (label, queriesByD) in queriesDiff.iteritems():
+    for (label, queriesByD) in queriesDiff.items():
         seriesDict[label][run] = np.average([data[key] for (key, x) in queriesByD])
 
-print "dropping queries because of NaN values: " + " ".join(queriesWithNanValues)
+print ("dropping queries because of NaN values: " + " ".join(queriesWithNanValues))
 
 df1 = DataFrame(seriesDict, columns=("0%-5%", "5%-25%", '25%-50%', '50%-75%', '75%-95%', '95%-100%'), index=args.runs)
 df2 = df1

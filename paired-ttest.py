@@ -1,3 +1,4 @@
+from __future__ import print_function
 from collections import defaultdict
 import csv
 import os
@@ -62,5 +63,5 @@ for run in datas:
         dataarray= [data[key] for key in queriesList]
 
         (tstat, prob) = sciStats.ttest_rel(basearray, dataarray)
-        print run, tstat, prob
+        print (run, tstat, prob)
 

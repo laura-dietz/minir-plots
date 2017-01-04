@@ -1,3 +1,4 @@
+from __future__ import print_function
 import csv
 import os
 from pandas.util.testing import DataFrame
@@ -31,7 +32,7 @@ parser.add_argument('--names', help='filename for names lookup', required=True, 
 parser.add_argument(dest='runs', nargs='+', type=lambda x: is_valid_file(parser, x))
 args = parser.parse_args()
 
-print "column.py metric=" + args.metric + " out=" + args.out
+print ("feature-column.py metric=" + args.metric + " out=" + args.out)
 
 namestsv = csv.reader(open(args.names, 'r'), delimiter='\t')
 namesDict = {row[0]: row[2][8:] for row in namestsv}

@@ -1,3 +1,4 @@
+from __future__ import print_function
 from collections import defaultdict
 import csv
 import os
@@ -69,16 +70,16 @@ for run in datas:
         helpsDict[run] = helps
         hurtsDict[run] = hurts
 
-print '\t'.join(['run', 'num helps', 'num hurts', 'list helps', 'list hurts'])
+print ('\t'.join(['run', 'num helps', 'num hurts', 'list helps', 'list hurts']))
 for run in datas:
     if not run == args.runs[0]:
-        print '\t'.join([run, str(len(helpsDict[run])), str(len(hurtsDict[run])), ' '.join(helpsDict[run]),
-                         ' '.join(hurtsDict[run])])
+        print ('\t'.join([run, str(len(helpsDict[run])), str(len(hurtsDict[run])), ' '.join(helpsDict[run]),
+                         ' '.join(hurtsDict[run])]))
 
-prefix = '/home/dietz/kbbridge/writing/sigir2014/data/eval/clueweb09b/'
-EQFE_help = set(helpsDict[prefix+'EQFE'])
-EQFE_help.difference_update(set(helpsDict[prefix+'rm']))
-EQFE_help.difference_update(set(helpsDict[prefix+'wikiRm1']))
-
-for q in EQFE_help:
-    print q,'EQFE',datas[prefix+'EQFE'][q],'SDM',basedata[q]
+# prefix = '/home/dietz/kbbridge/writing/sigir2014/data/eval/clueweb09b/'
+# EQFE_help = set(helpsDict[prefix+'EQFE'])
+# EQFE_help.difference_update(set(helpsDict[prefix+'rm']))
+# EQFE_help.difference_update(set(helpsDict[prefix+'wikiRm1']))
+#
+# for q in EQFE_help:
+#     print (q,'EQFE',datas[prefix+'EQFE'][q],'SDM',basedata[q])
