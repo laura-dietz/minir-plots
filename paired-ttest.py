@@ -25,8 +25,11 @@ def is_valid_file(parser, arg):
     else:
         return arg# open(arg,'r')  #return an open file handle
 
-
-parser = ArgumentParser()
+tooldescription = """
+Compute paired T-test for any run against the baseline (first run).
+Prints t-statistics and p-value for two-sided test.
+"""
+parser = ArgumentParser(description=tooldescription)
 parser.add_argument('--metric', help='metric for comparison', required=True)
 parser.add_argument('--format', help='trec_eval output or galago_eval output', default='trec_eval')
 parser.add_argument(dest='runs', nargs='+', type=lambda x: is_valid_file(parser, x))

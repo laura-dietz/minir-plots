@@ -24,7 +24,12 @@ def is_valid_file(parser, arg):
         return arg# open(arg,'r')  #return an open file handle
 
 
-parser = ArgumentParser()
+tooldescription = """
+Using the first run as the baseline, computes the numbers of queries on which each run
+improved performance ("helps") or lowered the performance ("hurt"). Also lists the queries
+that were helped or hurts separated by spaces.
+"""
+parser = ArgumentParser(description=tooldescription)
 parser.add_argument('--metric', help='metric for comparison', required=True)
 parser.add_argument('--delta', help='Minimum difference to be considered', type=float, default=0.00)
 parser.add_argument('--format', help='trec_eval output or galago_eval output', default='trec_eval')

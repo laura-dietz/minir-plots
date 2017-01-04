@@ -27,7 +27,12 @@ def is_valid_file(parser, arg):
     else:
         return arg
 
-parser = ArgumentParser()
+tooldescription = """
+Classic bar chart indicating the mean of values for the given
+metric across all queries with error bars indicating the standard
+error.
+"""
+parser = ArgumentParser(description=tooldescription)
 parser.add_argument('--out', help='outputfilename', metavar='FILE',  required=True)
 parser.add_argument('--metric', help='metric for comparison', required=True)
 parser.add_argument('--format', help='trec_eval output or galago_eval output', default='trec_eval')

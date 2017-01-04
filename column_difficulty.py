@@ -30,7 +30,13 @@ def is_valid_file(parser, arg):
         return arg
 
 
-parser = ArgumentParser()
+tooldescription = """
+Unconventional bar chart showing the mean performance for queries of different difficulties.
+Difficulty is defined by the performance of the first run (baseline). The chart contains a
+group for the 5% most difficult queries to the left, 5% easiest queries (to the right) as well
+as quartiles and intermediate ranges..
+"""
+parser = ArgumentParser(description=tooldescription)
 parser.add_argument('--out', help='outputfilename', metavar='FILE', required=True)
 parser.add_argument('--metric', help='metric for comparison', required=True)
 parser.add_argument('--diffmetric', help='metric for difficulty')
