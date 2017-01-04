@@ -1,5 +1,4 @@
 from __future__ import print_function
-import csv
 from math import sqrt
 import os
 import numpy as np
@@ -31,20 +30,28 @@ def is_valid_file(parser, arg):
 parser = ArgumentParser()
 parser.add_argument('--out', help='outputfilename', metavar='FILE',  required=True)
 parser.add_argument('--metric', help='metric for comparison', required=True)
+parser.add_argument('--format', help='trec_eval output or galago_eval output', default='trec_eval')
 parser.add_argument(dest='runs', nargs='+', type=lambda x: is_valid_file(parser, x))
 args = parser.parse_args()
 
 print("column.py metric="+args.metric+" out="+args.out)
 
+def read_ssv(fname):
+    lines = [line.split() for line in open(fname, 'r')]
+    if args.format.lower() == 'galago_eval':
+        return lines
+    elif args.format.lower() == 'trec_eval':
+        return [[line[1], line[0]] + line[2:] for line in lines]
 
 
 def findQueriesWithNanValues(run):
-    tsv = csv.reader(open(run, 'r'), delimiter='\t')
+    tsv = read_ssv(run)
+    print ("tsv,", tsv)
     queriesWithNan = {row[0] for row in tsv if row[1] == 'num_rel' and (float(row[2]) == 0.0 or math.isnan(float(row[2])))}
     return queriesWithNan
 
 def fetchValues(run):
-    tsv = csv.reader(open(run, 'r'), delimiter='\t')
+    tsv = read_ssv(run)
     data = {row[0]: float(row[2]) for row in tsv if row[1] == args.metric and not math.isnan(float(row[2]))}
     return data
 

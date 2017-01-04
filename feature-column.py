@@ -29,18 +29,29 @@ parser = ArgumentParser()
 parser.add_argument('--out', help='outputfilename', required=True)
 parser.add_argument('--metric', help='metric for comparison', required=True)
 parser.add_argument('--names', help='filename for names lookup', required=True, type=lambda x: is_valid_file(parser, x))
+parser.add_argument('--format', help='trec_eval output or galago_eval output', default='trec_eval')
 parser.add_argument(dest='runs', nargs='+', type=lambda x: is_valid_file(parser, x))
 args = parser.parse_args()
 
 print ("feature-column.py metric=" + args.metric + " out=" + args.out)
 
-namestsv = csv.reader(open(args.names, 'r'), delimiter='\t')
+
+def read_ssv(fname):
+    lines = [line.split() for line in open(fname, 'r')]
+    if args.format.lower() == 'galago_eval':
+        return lines
+    elif args.format.lower() == 'trec_eval':
+        return [[line[1], line[0]] + line[2:] for line in lines]
+
+
+
+namestsv = read_ssv(args.names)
 namesDict = {row[0]: row[2][8:] for row in namestsv}
 
 for run in args.runs:
-    tsv = csv.reader(open(run, 'r'), delimiter='\t')
+    tsv =read_ssv(run)
     values = [float(row[2]) for row in tsv if row[0] in namesDict]
-    tsv = csv.reader(open(run, 'r'), delimiter='\t')
+    tsv = read_ssv(run)
     labels = [namesDict[row[0]] for row in tsv if row[0] in namesDict]
 
     df2 = DataFrame(values, index=labels, columns=[os.path.basename(run)])
