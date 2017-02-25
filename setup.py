@@ -7,9 +7,9 @@ setup(
     packages=[],
     entry_points={
         'console_scripts': [
-            'minir-column = column:main',
-            'minir-ttest = paired-ttest:main',
-            'minir-treceval2minir = treceval2minir:main',
+            'minir-column=column',
+            'minir-ttest=paired-ttest',
+            'minir-treceval2minir=treceval2minir',
         ]
     },
     
