@@ -64,14 +64,14 @@ queriesList = list(queries)
 
 basedata = datas[args.runs[0]]
 
-basearray= [basedata[key] for key in queriesList]
+basearray= [basedata.get(key,0) for key in queriesList]
 
 
 for run in datas:
     if not run == args.runs[0]:
         data = datas[run]
 
-        dataarray= [data[key] for key in queriesList]
+        dataarray= [data.get(key,0) for key in queriesList]
 
         (tstat, prob) = sciStats.ttest_rel(basearray, dataarray)
         print (run, tstat, prob)

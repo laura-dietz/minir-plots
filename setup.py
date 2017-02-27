@@ -5,14 +5,6 @@ setup(
     name='minir-plots',
     version='1.1',
     packages=[],
-    entry_points={
-        'console_scripts': [
-            'minir-column=column',
-            'minir-ttest=paired-ttest',
-            'minir-treceval2minir=treceval2minir',
-        ]
-    },
-    
     
     url='minir-plots.cs.unh.edu',
     license='BSD 3-Clause',

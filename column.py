@@ -1,6 +1,10 @@
 from __future__ import print_function
-from math import sqrt
+
 import os
+import matplotlib as mpl
+mpl.use("Agg")
+
+from math import sqrt
 import numpy as np
 import math
 from pandas.util.testing import DataFrame, Series
@@ -51,7 +55,7 @@ def read_ssv(fname):
 
 def findQueriesWithNanValues(run):
     tsv = read_ssv(run)
-    print ("tsv,", tsv)
+    # print ("tsv,", tsv)
     queriesWithNan = {row[0] for row in tsv if row[1] == 'num_rel' and (float(row[2]) == 0.0 or math.isnan(float(row[2])))}
     return queriesWithNan
 
@@ -77,8 +81,8 @@ for run in datas:
     if sum(not key in data for key in queries) > 0:
         print("data for run "+run+" does not contain all queries "+" ".join(queries))
 
-    mean = np.average([data[key] for key in queries])
-    stderr = np.std([data[key] for key in queries]) / sqrt(len(queries))
+    mean = np.average([data.get(key, 0.0) for key in queries])
+    stderr = np.std([data.get(key, 0.0) for key in queries]) / sqrt(len(queries))
     seriesDict['mean'][run]=mean
     seriesDict['stderr'][run]=stderr
 
@@ -99,10 +103,10 @@ df2.index=[os.path.basename(label) for label in df1.index]
 
 
 plt.figure()
-df2.plot(kind='bar', yerr = df1['stderr'], color=['1.0', '0.80', '0.4', '0.0', '0.70'])
+df2.plot(kind='bar', yerr = df1['stderr'], color=['0.0', '0.6', '0.4', '0.8', '0.4','0.8','0.4', '0.8','0.4','0.8'] )
 plt.ylabel(args.metric, fontsize=20)
 plt.tick_params(axis='both', which='major', labelsize=20)
-plt.xticks(rotation=0)
+plt.xticks(rotation=90)
 plt.savefig(args.out, bbox_inches='tight')
 
 # plt.show()
