@@ -40,6 +40,7 @@ parser = ArgumentParser(description=tooldescription)
 parser.add_argument('--out', help='outputfilename', metavar='FILE',  required=True)
 parser.add_argument('--metric', help='metric for comparison', required=True)
 parser.add_argument('--format', help='trec_eval output or galago_eval output', default='trec_eval')
+parser.add_argument('--sort', help='sort methods in plot', action='store_true', default=False)
 parser.add_argument(dest='runs', nargs='+', type=lambda x: is_valid_file(parser, x))
 args = parser.parse_args()
 
@@ -98,12 +99,15 @@ for run in datas:
 
 
 df1 = DataFrame(seriesDict, index=args.runs)
+if args.sort:
+	df1.sort_values('mean',ascending=False,inplace=True) 
 df2 = df1['mean']
 df2.index=[os.path.basename(label) for label in df1.index]
 
-
-plt.figure()
-df2.plot(kind='bar', yerr = df1['stderr'], color=['0.0', '0.6', '0.4', '0.8', '0.4','0.8','0.4', '0.8','0.4','0.8'] )
+fig, ax = plt.subplots()
+#plt.figure()
+df2.plot(kind='bar', yerr = df1['stderr'], color=['0.0', '0.6', '0.4', '0.8','0.0', '0.6', '0.4', '0.8','0.0', '0.6', '0.4', '0.8'], ax=ax )
+ax.grid()
 plt.ylabel(args.metric, fontsize=20)
 plt.tick_params(axis='both', which='major', labelsize=20)
 plt.xticks(rotation=90)
