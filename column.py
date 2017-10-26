@@ -94,8 +94,8 @@ print( "dropping queries because of NaN values: "+ " ".join(queriesWithNanValues
 
 print ('\t'.join(['run', 'mean/stderr']))
 for run in datas:
-    if not run == args.runs[0]:
-        print ('\t'.join([run, str(seriesDict['mean'][run]), str(seriesDict['stderr'][run])]))
+    #if not run == args.runs[0]:
+    print ('\t'.join([run, str(seriesDict['mean'][run]), str(seriesDict['stderr'][run])]))
 
 
 df1 = DataFrame(seriesDict, index=args.runs)

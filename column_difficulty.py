@@ -113,8 +113,8 @@ df2.index = [os.path.basename(label) for label in df1.index]
 
 df3 = df2.transpose()
 
-plt.figure()
-df3.plot(kind='bar', label=args.metric, color=['0.0', '0.80', '0.4', '0.9', '0.70'])
+plt.figure( )
+df3.plot(kind='bar', label=args.metric, color=['0.0', '0.80', '0.4', '0.2', '0.70'], figsize=(7,7))
 leg = plt.legend(loc='best', fancybox=True)
 leg.get_frame().set_alpha(0.5)
 plt.tick_params(axis='both', which='major', labelsize=11)
