@@ -40,9 +40,12 @@ parser = ArgumentParser(description=tooldescription)
 parser.add_argument('--out', help='outputfilename', metavar='FILE',  required=True)
 parser.add_argument('--metric', help='metric for comparison', required=True)
 parser.add_argument('--format', help='trec_eval output or galago_eval output', default='trec_eval')
+parser.add_argument('-c', help='instead of average, also count non-existing queries', default=False, action='store_true')
 parser.add_argument('--sort', help='sort methods in plot', action='store_true', default=False)
 parser.add_argument(dest='runs', nargs='+', type=lambda x: is_valid_file(parser, x))
 args = parser.parse_args()
+
+numQueries_key = "num_q"
 
 print("column.py metric="+args.metric+" out="+args.out)
 
@@ -52,6 +55,12 @@ def read_ssv(fname):
         return lines
     elif args.format.lower() == 'trec_eval':
         return [[line[1], line[0]] + line[2:] for line in lines]
+
+
+def readNumQueries(run):
+    tsv = read_ssv(run)
+    data = [int(row[2]) for row in tsv if row[0] == "all" and row[1] == numQueries_key]
+    return data[0]
 
 
 def findQueriesWithNanValues(run):
@@ -72,6 +81,7 @@ datas = {run: fetchValues(run) for run in args.runs}
 queriesWithNanValues = {'all'}.union(*[findQueriesWithNanValues(run) for run in args.runs])
 basedata=datas[args.runs[0]]
 queries = set(basedata.keys()).difference(queriesWithNanValues)
+numQueries = readNumQueries(args.runs[0]) if args.c else len(queries)
 
 seriesDict = {'mean':dict(), 'stderr':dict()}
 
@@ -82,8 +92,19 @@ for run in datas:
     if sum(not key in data for key in queries) > 0:
         print("data for run "+run+" does not contain all queries "+" ".join(queries))
 
-    mean = np.average([data.get(key, 0.0) for key in queries])
-    stderr = np.std([data.get(key, 0.0) for key in queries]) / sqrt(len(queries))
+
+#    mean = np.average([data.get(key, 0.0) for key in queries])
+#    stderr = np.std([data.get(key, 0.0) for kes]) / sqrt(len(queries))
+
+
+    # if args.c:
+    #     mean = np.average([data.get(key, 0.0) for key in queries])
+    #     stderr = np.std([data.get(key, 0.0) for key in queries]) / sqrt(len(queries))
+    #     seriesDict['mean'][run]=mean
+    #     seriesDict['stderr'][run]=stderr
+    # else:
+    mean = np.sum([data.get(key, 0.0) for key in queries]) / numQueries
+    stderr = np.std([data.get(key, 0.0) for key in queries] + ([0.0]* (numQueries - len(queries)))) / sqrt(numQueries)
     seriesDict['mean'][run]=mean
     seriesDict['stderr'][run]=stderr
 
