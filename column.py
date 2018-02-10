@@ -93,16 +93,6 @@ for run in datas:
         print("data for run "+run+" does not contain all queries "+" ".join(queries))
 
 
-#    mean = np.average([data.get(key, 0.0) for key in queries])
-#    stderr = np.std([data.get(key, 0.0) for kes]) / sqrt(len(queries))
-
-
-    # if args.c:
-    #     mean = np.average([data.get(key, 0.0) for key in queries])
-    #     stderr = np.std([data.get(key, 0.0) for key in queries]) / sqrt(len(queries))
-    #     seriesDict['mean'][run]=mean
-    #     seriesDict['stderr'][run]=stderr
-    # else:
     mean = np.sum([data.get(key, 0.0) for key in queries]) / numQueries
     stderr = np.std([data.get(key, 0.0) for key in queries] + ([0.0]* (numQueries - len(queries)))) / sqrt(numQueries)
     seriesDict['mean'][run]=mean

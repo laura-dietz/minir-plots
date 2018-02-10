@@ -44,10 +44,12 @@ parser.add_argument('--out', help='outputfilename', metavar='FILE', required=Tru
 parser.add_argument('--metric', help='metric for comparison', required=True)
 parser.add_argument('--diffmetric', help='metric for difficulty')
 parser.add_argument('--format', help='trec_eval output or galago_eval output', default='trec_eval')
+parser.add_argument('-c', help='instead of average, also count non-existing queries', default=False, action='store_true')
 parser.add_argument(dest='runs', nargs='+', type=lambda x: is_valid_file(parser, x))
 args = parser.parse_args()
 
 diffmetric = args.diffmetric if args.diffmetric is not None else args.metric
+numQueries_key = "num_q"
 
 print ("column_difficulty.py metric=" + args.metric + " diffmetric=" + diffmetric + "  out=" + args.out)
 
@@ -59,6 +61,11 @@ def read_ssv(fname):
     elif args.format.lower() == 'trec_eval':
         return [[line[1], line[0]] + line[2:] for line in lines]
 
+
+def readNumQueries(run):
+    tsv = read_ssv(run)
+    data = [int(row[2]) for row in tsv if row[0] == "all" and row[1] == numQueries_key]
+    return data[0]
 
 
 def findQueriesWithNanValues(run):
@@ -82,6 +89,7 @@ basedata = fetchValues(args.runs[0], diffmetric)
 print (basedata)
 
 queries = set(basedata.keys()).difference(queriesWithNanValues)
+numQueries = readNumQueries(args.runs[0]) if args.c else len(queries)
 
 basev = [(key, basedata[key]) for key in queries]
 basev.sort(key=operator.itemgetter(1))
@@ -100,8 +108,8 @@ seriesDict = {key: dict() for key in queriesDiff}
 for run in datas:
     data = datas[run]
 
-    mean = np.average([data[key] for key in queries])
-    stderr = np.std([data[key] for key in queries]) / sqrt(len(queries))
+    mean = np.sum([data.get(key, 0.0) for key in queries]) / numQueries
+    stderr = np.std([data.get(key, 0.0) for key in queries] + ([0.0]* (numQueries - len(queries)))) / sqrt(numQueries)
     for (label, queriesByD) in queriesDiff.items():
         seriesDict[label][run] = np.average([data[key] for (key, x) in queriesByD])
 
