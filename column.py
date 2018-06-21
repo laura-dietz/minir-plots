@@ -34,7 +34,8 @@ def is_valid_file(parser, arg):
 tooldescription = """
 Classic bar chart indicating the mean of values for the given
 metric across all queries with error bars indicating the standard
-error.
+error.  (Run file is a misnomer, it should be called eval file, because it is
+the output of trec_eval -c -q)
 """
 parser = ArgumentParser(description=tooldescription)
 parser.add_argument('--out', help='outputfilename', metavar='FILE',  required=True)
