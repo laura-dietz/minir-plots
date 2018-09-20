@@ -10,6 +10,7 @@ import math
 from pandas.util.testing import DataFrame, Series
 import matplotlib.pyplot as plt
 import pandas as pd
+import itertools
 
 __author__ = 'dietz'
 
@@ -114,10 +115,19 @@ if args.sort:
 	df1.sort_values('mean',ascending=False,inplace=True) 
 df2 = df1['mean']
 df2.index=[os.path.basename(label) for label in df1.index]
+df1.index=[os.path.basename(label) for label in df1.index]
 
+
+print(plt.rcParams.get('axes.prop_cycle'))
+cs = {k:v for k,v in zip(set([label[0:3] for label in df1.index]), itertools.cycle(['#ff0000aa','#00ffffaa'])) }
+df1['color']=[cs[label[0:3]] for label in df1.index]
+print(df1['color'])
+plt.tick_params(colors=df1.color)
 fig, ax = plt.subplots()
 #plt.figure()
-df2.plot(kind='bar', yerr = df1['stderr'], color=['0.0', '0.6', '0.4', '0.8','0.0', '0.6', '0.4', '0.8','0.0', '0.6', '0.4', '0.8'], ax=ax )
+#df2.plot(kind='bar', yerr = df1['stderr'], color=['b','y','g'], ax=ax )
+df2.plot.bar(yerr = df1['stderr'], color=df1.color.values,  ax=ax)
+
 ax.grid()
 plt.ylabel(args.metric, fontsize=20)
 plt.tick_params(axis='both', which='major', labelsize=20)
