@@ -110,7 +110,7 @@ for run in datas:
     print ('\t'.join([run, str(seriesDict['mean'][run]), str(seriesDict['stderr'][run])]))
 
 
-df1 = DataFrame(seriesDict, index=args.runs)
+df1 = DataFrame(seriesDict, index=pd.Index(args.runs))
 if args.sort:
 	df1.sort_values('mean',ascending=False,inplace=True) 
 df2 = df1['mean']
