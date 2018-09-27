@@ -118,8 +118,8 @@ def main():
         df1.index=[os.path.basename(label) for label in df1.index]
 
 
-        print(plt.rcParams.get('axes.prop_cycle'))
-        cs = {k:v for k,v in zip(set([label[0:3] for label in df1.index]), itertools.cycle(['#ff0000aa','#00ffffaa'])) }
+        
+        cs = {k:v for k,v in zip(sorted(list(set([label[0:3] for label in df1.index]))), itertools.cycle(['0.1','0.9','0.5','0.3','0.7','0.2','0.8', '0.4','0.6'])) }
         df1['color']=[cs[label[0:3]] for label in df1.index]
         print(df1['color'])
         plt.tick_params(colors=df1.color)

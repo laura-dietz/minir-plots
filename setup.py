@@ -19,6 +19,7 @@ setup(
     entry_points={
         'console_scripts': [
           'minir-column=column:main',
+          'minir-pairttest=paired_ttest:main'
         ],
     }    
 )
