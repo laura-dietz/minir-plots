@@ -5,7 +5,7 @@ setup(
     name='minir-plots',
     version='1.1',
     packages=[],
-    py_modules=["column"],
+    py_modules=["column", "pairedttest"],
     
     url='minir-plots.cs.unh.edu',
     license='BSD 3-Clause',
@@ -19,7 +19,7 @@ setup(
     entry_points={
         'console_scripts': [
           'minir-column=column:main',
-          'minir-pairttest=paired_ttest:main'
+          'minir-pairttest=pairedttest:main'
         ],
     }    
 )
