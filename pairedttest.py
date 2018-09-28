@@ -35,6 +35,9 @@ parser.add_argument('--format', help='trec_eval output or galago_eval output', d
 parser.add_argument('--best',  action="store_true", help="compare all to best run (default: first run)")
 parser.add_argument(dest='runs', nargs='+', type=lambda x: is_valid_file(parser, x))
 
+def avg(lst):
+    return sum(list(lst))/len(lst)
+
 def main():
 
     args = parser.parse_args()
@@ -51,8 +54,11 @@ def main():
     def fetchValues(run):
         tsv = read_ssv(run)
         data = {row[0]: float(row[2]) for row in tsv if row[1] == args.metric}
-        return data
 
+        if 'all' not in data:
+            data['all']=avg(data.values())
+        return data
+     s
     def findQueriesWithNanValues(run):
         tsv = read_ssv(run)
         queriesWithNan = {row[0] for row in tsv if row[1] == 'num_rel' and (float(row[2]) == 0.0 or math.isnan(float(row[2])))}
