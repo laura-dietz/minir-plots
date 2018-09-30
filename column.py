@@ -11,6 +11,7 @@ from pandas.util.testing import DataFrame, Series
 import matplotlib.pyplot as plt
 import pandas as pd
 import itertools
+import pairedttest
 
 __author__ = 'dietz'
 
@@ -74,6 +75,12 @@ def main():
             return data
 
         args = parser.parse_args()
+
+        pairedt = pairedttest.pairedt(best=True, format=args.format, metric=args.metric, runs=args.runs)
+        print("paired t")
+        print(pairedt)
+        print("=-----=")
+
         numQueries_key = "num_q"
         print("column.py metric="+args.metric+" out="+args.out)
         
@@ -117,17 +124,34 @@ def main():
         df2.index=[os.path.basename(label) for label in df1.index]
         df1.index=[os.path.basename(label) for label in df1.index]
 
+        print('df2.index=',df2.index)
 
-        
+        df2.text=['**' if (math.isnan(pairedt[label][1]) or pairedt[label][1]>0.05) else '' for label in df2.index]
+        min_same_idx = max( [i if (math.isnan(pairedt[label][1]) or pairedt[label][1]>0.05) else 0 for i,label in enumerate(df2.index)])
+
+
         cs = {k:v for k,v in zip(sorted(list(set([label[0:3] for label in df1.index]))), itertools.cycle(['0.1','0.9','0.5','0.3','0.7','0.2','0.8', '0.4','0.6'])) }
         df1['color']=[cs[label[0:3]] for label in df1.index]
         print(df1['color'])
         plt.tick_params(colors=df1.color)
         fig, ax = plt.subplots()
-        #plt.figure()
-        #df2.plot(kind='bar', yerr = df1['stderr'], color=['b','y','g'], ax=ax )
+
+
         df2.plot.bar(yerr = df1['stderr'], color=df1.color.values,  ax=ax)
 
+        for (p, i) in zip(ax.patches,range(100)):
+            #print ('p', p, df2.index[i])
+            #ax.annotate(df2.text[i], xy=(p.get_x() + p.get_width() / 2.0, p.get_height()*0.9), ha='center', va='center',)
+
+            if i==min_same_idx:
+                frompoint=(p.get_x()+p.get_width(), p.get_height()/2.0)
+                topoint=(0.0-p.get_width()/2.0, p.get_height()/2.0)
+                ax.annotate("",
+                            xy=topoint, xycoords='data',
+                            xytext=frompoint, textcoords='data',
+                            arrowprops=dict(arrowstyle="<|-|>",
+                                            connectionstyle="arc3", ec='r'),
+                            )
         ax.grid()
         plt.ylabel(args.metric, fontsize=20)
         plt.tick_params(axis='both', which='major', labelsize=20)

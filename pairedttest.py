@@ -41,38 +41,45 @@ def avg(lst):
 def main():
 
     args = parser.parse_args()
+    xs = pairedt(** vars(args))
+    for run,(tstat,prob) in xs.items():
+        print (run, tstat, prob)
 
+
+
+
+def pairedt(format, metric, runs, best):
 
     def read_ssv(fname):
         lines = [line.split() for line in open(fname, 'r')]
-        if args.format.lower() == 'galago_eval':
+        if format.lower() == 'galago_eval':
             return lines
-        elif args.format.lower() == 'trec_eval':
+        elif format.lower() == 'trec_eval':
             return [[line[1], line[0]] + line[2:] for line in lines]
 
 
     def fetchValues(run):
         tsv = read_ssv(run)
-        data = {row[0]: float(row[2]) for row in tsv if row[1] == args.metric}
+        data = {row[0]: float(row[2]) for row in tsv if row[1] == metric}
 
         if 'all' not in data:
             data['all']=avg(data.values())
         return data
-     s
+
     def findQueriesWithNanValues(run):
         tsv = read_ssv(run)
         queriesWithNan = {row[0] for row in tsv if row[1] == 'num_rel' and (float(row[2]) == 0.0 or math.isnan(float(row[2])))}
         return queriesWithNan
 
 
-    datas = {run: fetchValues(run) for run in args.runs}
+    datas = {run: fetchValues(run) for run in runs}
 
-    queriesWithNanValues = {'all'}.union(*[findQueriesWithNanValues(run) for run in args.runs])
-    firstrun=datas[args.runs[0]]
+    queriesWithNanValues = {'all'}.union(*[findQueriesWithNanValues(run) for run in runs])
+    firstrun=datas[runs[0]]
     queries = set(firstrun.keys()).difference(queriesWithNanValues)
     queriesList = list(queries)
 
-    if args.best:
+    if best:
         dlist=[(d['all'], d) for key, d in datas.items()]
         basedata = max(dlist, key=lambda dup:dup[0])[1]
     else:
@@ -80,15 +87,18 @@ def main():
 
     basearray= [basedata.get(key,0) for key in queriesList]
 
+    result={}
 
     for run in datas:
-        if not run == args.runs[0]:
+        #if not run == args.runs[0]:
             data = datas[run]
+            label = os.path.basename(run)
 
             dataarray= [data.get(key,0) for key in queriesList]
 
             (tstat, prob) = sciStats.ttest_rel(basearray, dataarray)
-            print (run, tstat, prob)
+            result[label]= (tstat, prob)
 
+    return result
 if __name__ == '__main__':
     main()
