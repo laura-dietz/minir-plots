@@ -142,18 +142,20 @@ def main():
         df2.plot.bar(yerr = df1['stderr'], color=df1.color.values,  ax=ax)
 
         for (p, i) in zip(ax.patches,range(100)):
-            #print ('p', p, df2.index[i])
-            #ax.annotate(df2.text[i], xy=(p.get_x() + p.get_width() / 2.0, p.get_height()*0.9), ha='center', va='center',)
+            if args.sort :
 
-            if i==min_same_idx:
-                frompoint=(p.get_x()+p.get_width(), p.get_height()/2.0)
-                topoint=(0.0-p.get_width()/2.0, p.get_height()/2.0)
-                ax.annotate("",
-                            xy=topoint, xycoords='data',
-                            xytext=frompoint, textcoords='data',
-                            arrowprops=dict(arrowstyle="<|-|>",
-                                            connectionstyle="arc3", ec='r'),
-                            )
+                if i==min_same_idx:
+                    frompoint=(p.get_x()+p.get_width(), p.get_height()/2.0)
+                    topoint=(0.0-p.get_width()/2.0, p.get_height()/2.0)
+                    ax.annotate("",
+                                xy=topoint, xycoords='data',
+                                xytext=frompoint, textcoords='data',
+                                arrowprops=dict(arrowstyle="<|-|>",
+                                                connectionstyle="arc3", ec='r'),
+                                )
+            else:
+                ax.annotate(df2.text[i], xy=(p.get_x() + p.get_width() / 2.0, p.get_height()*0.9), ha='center', va='center',)
+
         ax.grid()
         plt.ylabel(args.metric, fontsize=20)
         plt.tick_params(axis='both', which='major', labelsize=20)
