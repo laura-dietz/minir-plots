@@ -25,7 +25,25 @@ Example:
     C09-2	ERR20	0.18581
     C09-2	P1	0.0
 
-These scripts require Python 2.7, numpy, scipy, matplotlib and pandas.
+These scripts require Python 3, numpy, scipy, matplotlib and pandas.
+
+Install
+-------
+
+Option A) setup.py:
+
+1. `python setup.py install`. 
+2. Call scripts `python column.py  ...`
+
+Option B) Nix:
+
+1. Install NIX from <https://nixos.org/nix/>
+2. cd into minir-plots; run `nix build`
+3. Call scripts with `nix run -f minir-plots -c minir-column ...`
+
+
+For other scripts (other than column.py/minir-column) see documentation below.
+
 
 
 Creating column plots with std error bars
