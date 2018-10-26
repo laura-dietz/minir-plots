@@ -34,63 +34,70 @@ parser.add_argument('--metric', help='metric for comparison', required=True)
 parser.add_argument('--delta', help='Minimum difference to be considered', type=float, default=0.00)
 parser.add_argument('--format', help='trec_eval output or galago_eval output', default='trec_eval')
 parser.add_argument(dest='runs', nargs='+', type=lambda x: is_valid_file(parser, x))
-args = parser.parse_args()
+
+
+def main():
+    args = parser.parse_args()
 
 
 
-def read_ssv(fname):
-    lines = [line.split() for line in open(fname, 'r')]
-    if args.format.lower() == 'galago_eval':
-        return lines
-    elif args.format.lower() == 'trec_eval':
-        return [[line[1], line[0]] + line[2:] for line in lines]
+    def read_ssv(fname):
+        lines = [line.split() for line in open(fname, 'r')]
+        if args.format.lower() == 'galago_eval':
+            return lines
+        elif args.format.lower() == 'trec_eval':
+            return [[line[1], line[0]] + line[2:] for line in lines]
 
 
-# with open(args.run1,'rb') as tsv1, open(args.run2, 'rb') as tsv2:
+    # with open(args.run1,'rb') as tsv1, open(args.run2, 'rb') as tsv2:
 
-def fetchValues(run):
-    tsv = read_ssv(run)
-    data = {row[0]: float(row[2]) for row in tsv if row[1] == args.metric}
-    return data
+    def fetchValues(run):
+        tsv = read_ssv(run)
+        data = {row[0]: float(row[2]) for row in tsv if row[1] == args.metric}
+        return data
 
-def findQueriesWithNanValues(run):
-    tsv = read_ssv(run)
-    queriesWithNan = {row[0] for row in tsv if row[1] == 'num_rel' and (float(row[2]) == 0.0 or math.isnan(float(row[2])))}
-    return queriesWithNan
+    def findQueriesWithNanValues(run):
+        tsv = read_ssv(run)
+        queriesWithNan = {row[0] for row in tsv if row[1] == 'num_rel' and (float(row[2]) == 0.0 or math.isnan(float(row[2])))}
+        return queriesWithNan
 
 
-datas = {run: fetchValues(run) for run in args.runs}
+    datas = {run: fetchValues(run) for run in args.runs}
 
-queriesWithNanValues = {'all'}.union(*[findQueriesWithNanValues(run) for run in args.runs])
-basedata=datas[args.runs[0]]
-queries = set(basedata.keys()).difference(queriesWithNanValues)
+    queriesWithNanValues = {'all'}.union(*[findQueriesWithNanValues(run) for run in args.runs])
+    basedata=datas[args.runs[0]]
+    queries = set(basedata.keys()).difference(queriesWithNanValues)
 
-basedata = datas[args.runs[0]]
-helpsDict = defaultdict(list)
-hurtsDict = defaultdict(list)
+    basedata = datas[args.runs[0]]
+    helpsDict = defaultdict(list)
+    hurtsDict = defaultdict(list)
 
-for run in datas:
-    if not run == args.runs[0]:
-        data = datas[run]
-        helps = list()
-        hurts = list()
-        for key in queries:
-            baseValue = basedata[key]
-            value = data[key]
-            if value - args.delta > baseValue:
-                helps.append(key)
-            if value + args.delta < baseValue:
-                hurts.append(key)
+    for run in datas:
+        if not run == args.runs[0]:
+            data = datas[run]
+            helps = list()
+            hurts = list()
+            for key in queries:
+                baseValue = basedata[key]
+                value = data[key]
+                if value - args.delta > baseValue:
+                    helps.append(key)
+                if value + args.delta < baseValue:
+                    hurts.append(key)
 
-        helpsDict[run] = helps
-        hurtsDict[run] = hurts
+            helpsDict[run] = helps
+            hurtsDict[run] = hurts
 
-print ('\t'.join(['run', 'num helps', 'num hurts', 'list helps', 'list hurts']))
-for run in datas:
-    if not run == args.runs[0]:
-        print ('\t'.join([run, str(len(helpsDict[run])), str(len(hurtsDict[run])), ' '.join(helpsDict[run]),
-                         ' '.join(hurtsDict[run])]))
+    print ('\t'.join(['run', 'num helps', 'num hurts', 'list helps', 'list hurts']))
+    for run in datas:
+        if not run == args.runs[0]:
+            print ('\t'.join([run, str(len(helpsDict[run])), str(len(hurtsDict[run])), ' '.join(helpsDict[run]),
+                             ' '.join(hurtsDict[run])]))
 
+
+
+if __name__ == '__main__':
+    main()
 # prefix = '/home/dietz/kbbridge/writing/sigir2014/data/eval/clueweb09b/'
 # EQFE_help = set(helpsDict[prefix+'EQFE'])
 # EQFE_help.difference_update(set(helpsDict[prefix+'rm']))

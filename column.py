@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import os
 import matplotlib as mpl
-mpl.use("Agg")
+
 
 from math import sqrt
 import numpy as np
@@ -50,6 +50,7 @@ parser.add_argument(dest='runs', nargs='+', type=lambda x: is_valid_file(parser,
 
 
 def main():
+        mpl.use("Agg")
         def read_ssv(fname):
             lines = [line.split() for line in open(fname, 'r')]
             if args.format.lower() == 'galago_eval':

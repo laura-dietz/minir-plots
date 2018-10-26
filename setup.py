@@ -5,7 +5,7 @@ setup(
     name='minir-plots',
     version='1.1',
     packages=[],
-    py_modules=["column", "pairedttest"],
+    py_modules=["column", "pairedttest", "column_difficulty", "hurtshelps", "feature_column"],
     
     url='minir-plots.cs.unh.edu',
     license='BSD 3-Clause',
@@ -18,8 +18,11 @@ setup(
 
     entry_points={
         'console_scripts': [
-          'minir-column=column:main',
-          'minir-pairttest=pairedttest:main'
+            'minir-column=column:main',
+            'minir-pairttest=pairedttest:main',
+            'minir-column-difficulty=column_difficulty:main',
+            'minir-feature-column=feature_column:main',
+            'minir-hurtshelps=hurtshelps:main'
         ],
     }    
 )
