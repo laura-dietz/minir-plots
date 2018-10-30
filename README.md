@@ -39,8 +39,9 @@ Option B) Nix:
 
 1. Install NIX from <https://nixos.org/nix/>
 2. cd into minir-plots; run `nix build`
-3. Call scripts with `nix run -f minir-plots -c minir-column ...`
+3. Call scripts with `nix run -f $minirPlotsDirectory -c $minirScript ...`
 
+where `$minirPlots` is the directory into which you checked out this repository and `$minirScript` is one of the plotting options listed below.
 
 For other scripts (other than column.py/minir-column) see documentation below.
 
@@ -52,7 +53,9 @@ Creating column plots with std error bars
 Classic bar chart indicating the mean of values for the given metric across all queries with error bars indicating the standard error.
 
 ```
-usage: column.py [-h] --out FILE --metric METRIC runs [runs ...]
+usage: nix run -f $minirPlotsDirectory -c minir-column  [-h] --out FILE --metric METRIC runs [runs ...]
+
+or: python column.py [-h] --out FILE --metric METRIC [-c] [-s] runs [runs ...]
 
 positional arguments:
   runs
@@ -61,6 +64,9 @@ optional arguments:
   -h, --help       show this help message and exit
   --out OUT        outputfilename
   --metric METRIC  metric for comparison
+  -c               also include omitted queries with score 0 (requires "num_q" entry)
+  --sort           sorts runs by performance
+  
 ```
 
 
@@ -72,12 +78,15 @@ the performance of the first run (baseline). The chart contains a group for the 
 5% easiest queries (to the right) as well as quartiles and intermediate ranges.
 
 ```
-usage: column_difficulty.py [-h] --out FILE --metric METRIC
-                            [--diffmetric DIFFMETRIC]
-                            runs [runs ...]
+usage: nix run -f $minirPlotsDirectory -c minir-column-difficulty  [-h]  --out FILE --metric METRIC
+                                   [--diffmetric DIFFMETRIC]
+                                   baselinerun [runs ...]
+
+or: python column_difficulty.py [-h] ... (as above)
 
 positional arguments:
-  runs
+  baselinerun           run file to define difficulty of queries
+  runs                  other run file for comparison
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -99,7 +108,8 @@ Using the first run as the baseline, computes the numbers of queries on which ea
 or lowered the performance ("hurt"). Also lists the queries that were helped or hurts separated by spaces.
 
 ```
-usage: hurtshelps.py [-h] --metric METRIC [--delta DELTA] runs [runs ...]
+usage: nix run -f $minirPlotsDirectory -c minir-hurtshelps [-h] --metric METRIC [--delta DELTA] runs [runs ...]
+or: python hurtshelps.py [-h] --metric METRIC [--delta DELTA] runs [runs ...]
 
 positional arguments:
   runs
@@ -118,10 +128,12 @@ Paired T-test
 Compute paired T-test for any run against the baseline (first run). Prints t-statistics and p-value for two-sided test.
 
 ```
-usage: paired-ttest.py [-h] --metric METRIC runs [runs ...]
+usage: nix run -f $minirPlotsDirectory -c minir-pairttest [-h] --metric METRIC runs [runs ...]
+or: python paired-ttest.py [-h] --metric METRIC baselinerun [runs ...]
 
 positional arguments:
-  runs
+  baselinerun      run file to define difficulty of queries
+  runs             other runs to compare
 
 optional arguments:
   -h, --help       show this help message and exit
