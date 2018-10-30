@@ -50,7 +50,7 @@ For other scripts (other than column.py/minir-column) see documentation below.
 Creating column plots with std error bars
 -------------------------------------------
 
-Classic bar chart indicating the mean of values for the given metric across all queries with error bars indicating the standard error.
+Classic bar chart indicating the mean of values for the given metric across all queries with error bars indicating the standard error. Will include results of a paired-t-test with respect to the best performing method - methods for which no significance of difference is detected are marked with a red arrow.
 
 ```
 usage: nix run -f $minirPlotsDirectory -c minir-column  [-h] --out FILE --metric METRIC runs [runs ...]
