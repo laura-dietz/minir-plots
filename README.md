@@ -3,7 +3,7 @@ minir-plots
 
 Mini Plotting scripts for IR experiments.
 
-Works with query-by-query output of trec-eval and galago-eval evaluation code which produce run files in the tab-separated form queryId, metric, value.
+Works with query-by-query output of trec-eval and galago-eval evaluation code which produce run files in the tab-separated form queryId, metric, value. We refer to this evaluation output for a run file as "run" in the following.
 
 Example:
 
