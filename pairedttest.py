@@ -36,9 +36,9 @@ parser.add_argument('--best',  action="store_true", help="compare all to best ru
 parser.add_argument(dest='runs', nargs='+', type=lambda x: is_valid_file(parser, x))
 
 def avg(lst):
-    if len(lst)==0 then 
+    if len(lst)==0: 
         return 0
-    else
+    else:
         return sum(list(lst))/len(lst)
 
 def main():
