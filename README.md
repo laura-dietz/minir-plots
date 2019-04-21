@@ -66,6 +66,7 @@ optional arguments:
   --metric METRIC  metric for comparison
   -c               also include omitted queries with score 0 (requires "num_q" entry)
   --sort           sorts runs by performance
+  --format FORMAT  format of eval output, trec_eval or galago_eval
   
 ```
 
@@ -94,6 +95,7 @@ optional arguments:
   --metric METRIC       metric for comparison
   --diffmetric DIFFMETRIC
                         metric for difficulty
+  --format FORMAT  format of eval output, trec_eval or galago_eval
 
 ```
 
@@ -118,6 +120,7 @@ optional arguments:
   -h, --help       show this help message and exit
   --metric METRIC  metric for comparison
   --delta DELTA    Minimum difference to be considered
+  --format FORMAT  format of eval output, trec_eval or galago_eval
 ```
 
 If delta is given, only queries that differed by at least this amout are considered in the analysis.
@@ -138,4 +141,5 @@ positional arguments:
 optional arguments:
   -h, --help       show this help message and exit
   --metric METRIC  metric for comparison
+  --format FORMAT  format of eval output, trec_eval or galago_eval
 ```
