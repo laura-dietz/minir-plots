@@ -6,7 +6,8 @@ import matplotlib as mpl
 
 import numpy as np
 import math
-from pandas.util.testing import DataFrame
+import pandas as pd
+#from pandas._testing import makeDataFrame
 import operator
 
 import matplotlib.pyplot as plt
@@ -58,11 +59,14 @@ def main():
 
 
     def read_ssv(fname):
-        lines = [line.split() for line in open(fname, 'r')]
+        with open(fname,'r') as f:
+            for _ in range(1):
+                next(f)
+            lines = [line.split() for line in f]
         if args.format.lower() == 'galago_eval':
             return lines
         elif args.format.lower() == 'trec_eval':
-            return [[line[1], line[0]] + line[2:] for line in lines]
+            return [[line[0], line[1]] + line[2:] for line in lines]
 
 
     def readNumQueries(run):
@@ -89,7 +93,7 @@ def main():
     # deal with nans
     queriesWithNanValues = {'all'}.union(*[findQueriesWithNanValues(run) for run in args.runs])
     basedata = fetchValues(args.runs[0], diffmetric)
-    print (basedata)
+
 
     queries = set(basedata.keys()).difference(queriesWithNanValues)
     numQueries = readNumQueries(args.runs[0]) if args.c else len(queries)
@@ -118,7 +122,7 @@ def main():
 
     print ("dropping queries because of NaN values: " + " ".join(queriesWithNanValues))
 
-    df1 = DataFrame(seriesDict, columns=("0%-5%", "5%-25%", '25%-50%', '50%-75%', '75%-95%', '95%-100%'), index=args.runs)
+    df1 = pd._testing.DataFrame(seriesDict, columns=("0%-5%", "5%-25%", '25%-50%', '50%-75%', '75%-95%', '95%-100%'), index=args.runs)
     df2 = df1
     df2.index = [os.path.basename(label) for label in df1.index]
 
